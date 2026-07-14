@@ -2,7 +2,16 @@
 
 AI inference gateway that automatically selects the most cost-effective language model based on quality, latency, privacy and budget constraints. The platform supports model fallback, structured-output validation, provider failover, evaluation datasets, cost tracking and complete request observability.
 
-> Repositorio sugerido: `intelligent-model-router`
+> Repositorio: [FranLepGill/intelligent-model-router](https://github.com/FranLepGill/intelligent-model-router)
+
+## Documentación
+
+| Documento | Contenido |
+|-----------|-----------|
+| [docs/STATUS.md](docs/STATUS.md) | **Todo lo implementado hasta ahora**, pendientes y decisiones |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Flujo, módulos y cómo extender providers |
+| [docs/API.md](docs/API.md) | Contratos HTTP actuales |
+| [docs/PRODUCT_SPEC.md](docs/PRODUCT_SPEC.md) | Resumen del brief de producto |
 
 ## Qué resuelve
 
@@ -157,11 +166,13 @@ pytest -q
 
 ## Roadmap del MVP
 
-1. **Fase 1 (hecha en esta base):** FastAPI, PostgreSQL, clientes, API keys, modelos, providers mock, `POST /inference`
-2. **Fase 2–4:** routing avanzado, fallback, circuit breaker, idempotencia
+1. **Fase 1 (hecha):** FastAPI, PostgreSQL, clientes, API keys, modelos, providers mock, `POST /inference`
+2. **Fase 2–4 (parcial):** routing + validación + fallback + idempotencia hechos; faltan circuit breaker, rate limit Redis y adapters reales
 3. **Fase 5:** datasets de evaluación (50–100 casos)
 4. **Fase 6–7:** observabilidad + panel admin React
-5. **Fase 8:** tests de carga, docs, demo pública
+5. **Fase 8:** tests de carga, diagrama, demo pública
+
+Detalle del avance: [docs/STATUS.md](docs/STATUS.md)
 
 ## Portfolio blurb
 

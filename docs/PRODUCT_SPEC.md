@@ -1,14 +1,29 @@
-# Product specification summary
+# Product specification (resumen)
 
-This repository implements the **Intelligent AI Model Routing Platform** described in the project brief.
+Fuente completa: `Proyect_Letter/Intelligent AI Model Routing Platform.pdf`
 
-Full product requirements live in the original specification (sections 1–30). This scaffold covers:
+## Problema
 
-- Modular monolith layout
-- Data model for clients, API keys, providers, models, policies, requests and attempts
-- Common inference API
-- Deterministic feature extraction + scoring router
-- Mock dual-provider adapters with fallback/escalation hooks
-- Seeded demo client for local development
+Enviar todas las consultas al mismo modelo genera costo alto, latencia innecesaria, dependencia de un solo vendor y poca trazabilidad de calidad.
 
-Out of scope for v1 (unchanged from the brief): fine-tuning, full contact-center product, Kubernetes, multi-region HA, ML-based routing, audio/video.
+## Solución
+
+Plataforma intermediaria (inference gateway) que elige automáticamente el modelo más económico capaz de cumplir calidad, latencia, privacidad y presupuesto.
+
+## Usuarios
+
+1. **Aplicación cliente** — consume la API (atención al cliente, docs, HR, etc.)
+2. **Administrador** — configura providers, modelos, límites, políticas
+3. **Analista** — consulta métricas, errores, comparaciones
+
+## Demo objetivo
+
+Clasificación de consultas de atención al cliente en:
+
+`password_problem` · `duplicate_charge` · `refund_problem` · `account_blocked` · `general_question`
+
+Con un modelo económico, uno potente, fallback, failover y comparación de costos.
+
+## Estado de implementación
+
+Ver [STATUS.md](./STATUS.md) para el detalle de lo ya construido vs. pendientes del brief.
