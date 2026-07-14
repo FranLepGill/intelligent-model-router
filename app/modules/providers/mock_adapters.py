@@ -61,7 +61,7 @@ class MockProviderAAdapter(ProviderAdapter):
         language: str = "es",
     ) -> ProviderResponse:
         started = time.perf_counter()
-        await asyncio.sleep(0.05)
+        await asyncio.sleep(0.01)
 
         # Deterministic failure for forced demo scenarios
         if "FORCE_PROVIDER_A_DOWN" in prompt:
@@ -114,7 +114,7 @@ class MockProviderBAdapter(ProviderAdapter):
         language: str = "es",
     ) -> ProviderResponse:
         started = time.perf_counter()
-        await asyncio.sleep(0.12)
+        await asyncio.sleep(0.02)
 
         if "FORCE_PROVIDER_B_DOWN" in prompt:
             return ProviderResponse(

@@ -4,7 +4,7 @@
 **Repositorio:** https://github.com/FranLepGill/intelligent-model-router  
 **Cuenta GitHub:** `FranLepGill`  
 **Nombre del repo:** `intelligent-model-router`  
-**Fase actual:** Fase 1 (base del backend) + parte de Fase 2–4 (inferencia, routing básico, fallback)
+**Fase actual:** Fase 1–4 parcial + **Fase 5 (evaluaciones)** completada
 
 ---
 
@@ -81,14 +81,28 @@ Se inicializó el proyecto como un **monolito modular** en FastAPI que actúa co
 | `GET /api/v1/requests` | Hecho | historial |
 | CRUD parcial de modelos | Hecho | GET / POST / PATCH |
 
-### 2.4 Testing
+### 2.4 Evaluaciones — Fase 5
+
+| Ítem | Estado | Notas |
+|------|--------|-------|
+| Tablas evaluation_* | Hecho | migración `002` |
+| Dataset 80 casos customer_support | Hecho | seed `customer-support-v1` |
+| Categorías demo (5) | Hecho | 16 casos c/u approx |
+| Dificultades easy/medium/hard | Hecho | 37 / 33 / 10 |
+| `POST /evaluations/run` | Hecho | compara modelos |
+| Métricas + summary | Hecho | accuracy, JSON, costo, latencia |
+| Update `quality_by_task` | Hecho | blend 30/70 hacia router |
+| GET datasets / results | Hecho | |
+
+### 2.5 Testing
 
 | Ítem | Estado |
 |------|--------|
 | Tests unitarios auth | Hecho (`tests/test_auth.py`) |
 | Tests unitarios routing | Hecho (`tests/test_routing.py`) |
 | Tests unitarios validation | Hecho (`tests/test_validation.py`) |
-| 6 tests passing en CI | Hecho |
+| Tests unitarios evaluations | Hecho (`tests/test_evaluations.py`) |
+| 13 tests passing en CI | Hecho |
 | Tests de integración con DB | Pendiente |
 | Tests de carga (k6/Locust) | Pendiente |
 
@@ -257,9 +271,11 @@ Historia: *Como aplicación cliente, quiero enviar una consulta a través de una
 
 ### Fase 5 — Evaluaciones
 
-- [ ] Datasets + casos (50–100 consultas customer_support)
-- [ ] `POST /api/v1/evaluations/run`
-- [ ] Métricas de calidad alimentando el router
+- [x] Datasets + casos (80 consultas `customer-support-v1`)
+- [x] Tablas `evaluation_datasets|cases|runs|results` + migración `002`
+- [x] `POST /api/v1/evaluations/run` + GET resultados/datasets
+- [x] Métricas (accuracy, JSON válido, costo, latencia, por dificultad/idioma)
+- [x] Actualización de `quality_by_task` usada por el router
 
 ### Fase 6 — Observabilidad
 

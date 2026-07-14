@@ -204,3 +204,86 @@ class InferenceAttempt(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     request: Mapped[InferenceRequest] = relationship(back_populates="attempts")
+
+
+class EvaluationRunStatus(str, enum.Enum):
+    pending = "pending"
+    running = "running"
+    completed = "completed"
+    failed = "failed"
+
+
+class EvaluationDataset(Base):
+    __tablename__ = "evaluation_datasets"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    task_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    version: Mapped[str] = mapped_column(String(32), default="1.0")
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    cases: Mapped[list[EvaluationCase]] = relationship(back_populates="dataset")
+    runs: Mapped[list[EvaluationRun]] = relationship(back_populates="dataset")
+
+
+class EvaluationCase(Base):
+    __tablename__ = "evaluation_cases"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    dataset_id: Mapped[str] = mapped_column(ForeignKey("evaluation_datasets.id"), nullable=False)
+    case_key: Mapped[str] = mapped_column(String(64), nullable=False)
+    input_text: Mapped[str] = mapped_column(Text, nullable=False)
+    expected_output: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    difficulty: Mapped[str] = mapped_column(String(32), default="medium")
+    language: Mapped[str] = mapped_column(String(16), default="es")
+    tags: Mapped[list[Any]] = mapped_column(JSONB, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    dataset: Mapped[EvaluationDataset] = relationship(back_populates="cases")
+    results: Mapped[list[EvaluationResult]] = relationship(back_populates="case")
+
+    __table_args__ = (UniqueConstraint("dataset_id", "case_key", name="uq_dataset_case_key"),)
+
+
+class EvaluationRun(Base):
+    __tablename__ = "evaluation_runs"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    dataset_id: Mapped[str] = mapped_column(ForeignKey("evaluation_datasets.id"), nullable=False)
+    status: Mapped[EvaluationRunStatus] = mapped_column(
+        Enum(EvaluationRunStatus, name="evaluation_run_status"),
+        default=EvaluationRunStatus.pending,
+    )
+    model_ids: Mapped[list[Any]] = mapped_column(JSONB, default=list)
+    summary: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)
+    update_model_quality: Mapped[bool] = mapped_column(Boolean, default=True)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    dataset: Mapped[EvaluationDataset] = relationship(back_populates="runs")
+    results: Mapped[list[EvaluationResult]] = relationship(back_populates="run")
+
+
+class EvaluationResult(Base):
+    __tablename__ = "evaluation_results"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    run_id: Mapped[str] = mapped_column(ForeignKey("evaluation_runs.id"), nullable=False)
+    case_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("evaluation_cases.id"), nullable=False)
+    model_id: Mapped[str] = mapped_column(ForeignKey("ai_models.id"), nullable=False)
+    score: Mapped[float] = mapped_column(Float, default=0.0)
+    correct: Mapped[bool] = mapped_column(Boolean, default=False)
+    valid_output: Mapped[bool] = mapped_column(Boolean, default=False)
+    latency_ms: Mapped[int] = mapped_column(Integer, default=0)
+    input_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    output_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    estimated_cost_usd: Mapped[float] = mapped_column(Float, default=0.0)
+    obtained_output: Mapped[dict[str, Any] | None] = mapped_column(JSONB, nullable=True)
+    error_type: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    executed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    run: Mapped[EvaluationRun] = relationship(back_populates="results")
+    case: Mapped[EvaluationCase] = relationship(back_populates="results")

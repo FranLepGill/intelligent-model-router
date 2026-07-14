@@ -167,10 +167,19 @@ pytest -q
 ## Roadmap del MVP
 
 1. **Fase 1 (hecha):** FastAPI, PostgreSQL, clientes, API keys, modelos, providers mock, `POST /inference`
-2. **Fase 2–4 (parcial):** routing + validación + fallback + idempotencia hechos; faltan circuit breaker, rate limit Redis y adapters reales
-3. **Fase 5:** datasets de evaluación (50–100 casos)
+2. **Fase 2–4 (parcial):** routing + validación + fallback + idempotencia; faltan circuit breaker, rate limit Redis y adapters reales
+3. **Fase 5 (hecha):** dataset `customer-support-v1` (80 casos), `POST /api/v1/evaluations/run`, métricas → `quality_by_task`
 4. **Fase 6–7:** observabilidad + panel admin React
 5. **Fase 8:** tests de carga, diagrama, demo pública
+
+### Evaluar modelos (Fase 5)
+
+```bash
+curl -X POST http://localhost:8000/api/v1/evaluations/run \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: imr_demo_key_change_me_in_production_abc123" \
+  -d "{\"dataset_id\": \"customer-support-v1\", \"update_model_quality\": true}"
+```
 
 Detalle del avance: [docs/STATUS.md](docs/STATUS.md)
 

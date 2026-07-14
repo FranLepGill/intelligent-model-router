@@ -9,23 +9,28 @@ from app.models.entities import (
     ApiKey,
     Client,
     ClientStatus,
+    EvaluationCase,
+    EvaluationDataset,
     ModelProvider,
     ProviderStatus,
     RoutingPolicy,
     RoutingStrategy,
 )
 from app.modules.authentication.service import generate_api_key
+from app.modules.evaluations.dataset_cases import CUSTOMER_SUPPORT_CASES
 
 logger = structlog.get_logger()
 
 # Stable demo key so local docs stay simple.
 DEMO_RAW_API_KEY = "imr_demo_key_change_me_in_production_abc123"
+DEMO_DATASET_ID = "customer-support-v1"
 
 
 async def seed_demo_data(session: AsyncSession) -> None:
     existing = await session.execute(select(Client).where(Client.name == "demo-customer-support"))
     if existing.scalar_one_or_none() is not None:
         logger.info("seed.skipped", reason="demo client already exists")
+        await seed_evaluation_dataset(session)
         return
 
     client = Client(
@@ -126,4 +131,46 @@ async def seed_demo_data(session: AsyncSession) -> None:
         client=client.name,
         demo_api_key=DEMO_RAW_API_KEY,
         models=["model-small", "model-medium"],
+    )
+    await seed_evaluation_dataset(session)
+
+
+async def seed_evaluation_dataset(session: AsyncSession) -> None:
+    existing = await session.get(EvaluationDataset, DEMO_DATASET_ID)
+    if existing is not None:
+        logger.info("seed.evaluations.skipped", dataset_id=DEMO_DATASET_ID)
+        return
+
+    dataset = EvaluationDataset(
+        id=DEMO_DATASET_ID,
+        name="Customer Support Classification v1",
+        task_type="customer_support",
+        version="1.0",
+        description=(
+            "80 consultas de atención al cliente para evaluar clasificación "
+            "(password, cobranza duplicada, reembolso, bloqueo, general)."
+        ),
+    )
+    session.add(dataset)
+    await session.flush()
+
+    session.add_all(
+        [
+            EvaluationCase(
+                dataset_id=DEMO_DATASET_ID,
+                case_key=case["case_key"],
+                input_text=case["input"],
+                expected_output=case["expected_output"],
+                difficulty=case["difficulty"],
+                language=case["language"],
+                tags=case["tags"],
+            )
+            for case in CUSTOMER_SUPPORT_CASES
+        ]
+    )
+    await session.commit()
+    logger.info(
+        "seed.evaluations.completed",
+        dataset_id=DEMO_DATASET_ID,
+        cases=len(CUSTOMER_SUPPORT_CASES),
     )

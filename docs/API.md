@@ -135,8 +135,42 @@ Actualización parcial (enabled, costos, calidad, etc.).
 
 ---
 
+## Evaluations (Fase 5)
+
+### `GET /api/v1/evaluations/datasets`
+
+Lista datasets disponibles (demo: `customer-support-v1` con 80 casos).
+
+### `GET /api/v1/evaluations/datasets/{dataset_id}`
+
+Detalle del dataset + casos.
+
+### `POST /api/v1/evaluations/run`
+
+Ejecuta todos los casos contra los modelos indicados (o todos los enabled).
+
+```json
+{
+  "dataset_id": "customer-support-v1",
+  "model_ids": ["model-small", "model-medium"],
+  "update_model_quality": true
+}
+```
+
+Actualiza `quality_by_task` de cada modelo con el score medido (blend 30% histórico / 70% nueva eval) para que el router use datos reales de evaluación.
+
+### `GET /api/v1/evaluations/{evaluation_id}`
+
+Resumen de la corrida (accuracy, costo, latencia, calidad por dificultad/idioma).
+
+### `GET /api/v1/evaluations/{evaluation_id}/results`
+
+Resultados por caso/modelo.
+
+### `GET /api/v1/evaluations`
+
+Historial de corridas.
+
 ## Endpoints del brief aún no expuestos
 
 - `POST /api/v1/routing-policies`
-- `POST /api/v1/evaluations/run`
-- `GET /api/v1/evaluations/{evaluation_id}`
