@@ -34,7 +34,7 @@ No es un chatbot final: es un **gateway de inferencia** para otras aplicaciones.
 | Persistencia | PostgreSQL, SQLAlchemy, Alembic |
 | Cache / rate limit | Redis |
 | Providers | Adaptadores comunes + mocks (fase 1) |
-| Frontend (próximo) | React + TypeScript |
+| Frontend admin | React + TypeScript (Vite) |
 | Infra | Docker Compose, GitHub Actions |
 
 ## Arranque rápido
@@ -52,7 +52,8 @@ docker compose up --build
 ```
 
 API: http://localhost:8000  
-Docs: http://localhost:8000/docs
+Docs: http://localhost:8000/docs  
+Admin panel: http://localhost:5173
 
 ### Demo API key
 
@@ -169,8 +170,23 @@ pytest -q
 1. **Fase 1 (hecha):** FastAPI, PostgreSQL, clientes, API keys, modelos, providers mock, `POST /inference`
 2. **Fase 2–4 (parcial):** routing + validación + fallback + idempotencia; faltan circuit breaker, rate limit Redis y adapters reales
 3. **Fase 5 (hecha):** dataset `customer-support-v1` (80 casos), `POST /api/v1/evaluations/run`, métricas → `quality_by_task`
-4. **Fase 6–7:** observabilidad + panel admin React
-5. **Fase 8:** tests de carga, diagrama, demo pública
+4. **Fase 7 (hecha):** panel admin React (dashboard, modelos, solicitudes, evaluaciones, clientes)
+5. **Fase 6 / 8:** observabilidad avanzada, tests de carga, diagrama, demo pública
+
+### Panel admin (dev local)
+
+```bash
+# API + DB
+docker compose up --build
+
+# o solo frontend contra API local
+cd frontend
+npm install
+npm run dev
+```
+
+Admin: http://localhost:5173 (Docker) o http://localhost:5173 (Vite).  
+Demo key precargada: `imr_demo_key_change_me_in_production_abc123`.
 
 ### Evaluar modelos (Fase 5)
 

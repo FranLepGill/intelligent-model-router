@@ -286,8 +286,12 @@ Historia: *Como aplicación cliente, quiero enviar una consulta a través de una
 
 ### Fase 7 — Panel admin (React + TypeScript)
 
-- [ ] Dashboard (requests, costo, latencia)
-- [ ] Historial, modelos, evaluaciones, clientes, políticas
+- [x] App Vite + React + TypeScript en `frontend/`
+- [x] Dashboard (requests, costo, latencia, modelo top, errores por provider)
+- [x] Historial + detalle de solicitudes
+- [x] Modelos, evaluaciones (run + comparación), clientes/políticas
+- [x] Login por API key + servicio Docker `admin` en puerto 5173
+- [x] Endpoints soporte: `GET /api/v1/admin/metrics`, `GET /api/v1/me`
 
 ### Fase 8 — Calidad final
 

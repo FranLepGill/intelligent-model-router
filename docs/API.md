@@ -135,6 +135,16 @@ Actualización parcial (enabled, costos, calidad, etc.).
 
 ---
 
+## Admin / panel
+
+### `GET /api/v1/me`
+
+Perfil del cliente autenticado: límites, prefixes de API keys y políticas.
+
+### `GET /api/v1/admin/metrics`
+
+Agregados para el dashboard: totales, costo, latencia, uso por modelo, errores por provider, requests recientes.
+
 ## Evaluations (Fase 5)
 
 ### `GET /api/v1/evaluations/datasets`
